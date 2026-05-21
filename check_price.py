@@ -159,7 +159,7 @@ def main() -> None:
 
     print(f"📋 Dernier prix connu : {last_price} €")
 
-    if current_price < last_price:
+    if True:
         diff = last_price - current_price
         message = (
             f"🎉 Baisse de prix sur Castorama !\n"
