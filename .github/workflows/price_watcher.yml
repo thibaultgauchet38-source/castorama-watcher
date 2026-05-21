@@ -1,0 +1,36 @@
+name: 🏷️ Castorama Price Watcher
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # toutes les heures
+  workflow_dispatch:        # permet de lancer manuellement depuis GitHub
+
+jobs:
+  check-price:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 📦 Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: 💾 Restaurer le dernier prix connu
+        uses: actions/cache@v4
+        with:
+          path: last_price.json
+          key: last-price-cache
+
+      - name: 🔍 Vérifier le prix
+        env:
+          PRODUCT_URL:          ${{ secrets.PRODUCT_URL }}
+          TWILIO_ACCOUNT_SID:   ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN:    ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TO_WHATSAPP_NUMBER:   ${{ secrets.TO_WHATSAPP_NUMBER }}
+        run: python check_price.py
